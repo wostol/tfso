@@ -22,20 +22,20 @@ export function DeadlineBanner() {
 
   return (
     <div role="region" aria-label="Важное объявление" className="relative z-30 mx-auto max-w-7xl px-5 md:px-8">
-      <div className="flex flex-col gap-3 rounded-lg border border-amber/40 bg-amber/12 p-4 sm:flex-row sm:items-center sm:gap-4 sm:pr-3">
+      <div className="flex flex-col gap-3 rounded-lg border border-amber/40 bg-amber/15 p-4 backdrop-blur-sm sm:flex-row sm:items-center sm:gap-4 sm:pr-3">
         <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-amber text-white">
           <AlarmClock className="size-5" />
         </span>
-        <p className="flex-1 text-[15px] leading-snug text-ink">
+        <p className="flex-1 text-[15px] leading-snug text-paper/90">
           {deadline.text}{' '}
-          <strong className="font-mono font-semibold tabular-nums text-ink">{deadline.dueLabel}</strong>
-          {expired ? <span className="ml-1 text-muted-foreground">— приём завершён.</span> : null}
+          <strong className="font-mono font-semibold tabular-nums text-open">{deadline.dueLabel}</strong>
+          {expired ? <span className="ml-1 text-paper/60">— приём завершён.</span> : null}
         </p>
         <div className="flex items-center gap-2">
           <a
             href={expired ? undefined : '#calendar'}
             aria-disabled={expired}
-            className="inline-flex h-9 items-center rounded-md bg-ink px-4 text-sm font-semibold text-paper transition hover:bg-ink/85 aria-disabled:pointer-events-none aria-disabled:opacity-40"
+            className="inline-flex h-9 items-center rounded-md bg-paper px-4 text-sm font-semibold text-forest-deep transition hover:bg-paper/85 aria-disabled:pointer-events-none aria-disabled:opacity-40"
           >
             {expired ? 'Срок истёк' : deadline.actionLabel}
           </a>
@@ -45,7 +45,7 @@ export function DeadlineBanner() {
               localStorage.setItem(storageKey, '1')
               setVisible(false)
             }}
-            className="flex size-9 items-center justify-center rounded-md text-ink/70 transition hover:bg-ink/5 hover:text-ink"
+            className="flex size-9 items-center justify-center rounded-md text-paper/70 transition hover:bg-paper/10 hover:text-paper"
           >
             <X className="size-4" />
             <span className="sr-only">Скрыть объявление</span>

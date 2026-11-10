@@ -1,7 +1,15 @@
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 
-export function Logo({ compact = false, className }: { compact?: boolean; className?: string }) {
+export function Logo({
+  compact = false,
+  dark = false,
+  className,
+}: {
+  compact?: boolean
+  dark?: boolean
+  className?: string
+}) {
   return (
     <Link
       href="/"
@@ -23,10 +31,15 @@ export function Logo({ compact = false, className }: { compact?: boolean; classN
         <circle cx="24" cy="24" r="2.2" fill="var(--forest-deep)" />
       </svg>
       <span className="flex flex-col leading-none">
-        <span className="font-heading text-lg font-extrabold tracking-tight text-ink">ТФСО</span>
+        <span
+          className={cn('font-heading text-lg font-extrabold tracking-tight', dark ? 'text-paper' : 'text-ink')}
+        >
+          ТФСО
+        </span>
         <span
           className={cn(
-            'mt-1 max-w-[11rem] text-[11px] leading-tight text-muted-foreground transition-all duration-300',
+            'mt-1 max-w-[11rem] text-[11px] leading-tight transition-all duration-300',
+            dark ? 'text-paper/60' : 'text-muted-foreground',
             compact && 'hidden sm:block',
           )}
         >

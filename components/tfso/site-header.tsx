@@ -62,8 +62,8 @@ export function SiteHeader() {
         className={cn(
           'fixed inset-x-0 top-0 z-40 transition-all duration-300',
           scrolled
-            ? 'border-b border-border/70 bg-paper/75 shadow-sm backdrop-blur-xl backdrop-saturate-150'
-            : 'bg-transparent',
+            ? 'border-b border-paper/10 bg-forest-deep/85 shadow-lg shadow-forest-deep/30 backdrop-blur-xl backdrop-saturate-150'
+            : 'border-b border-transparent bg-gradient-to-b from-forest-deep/70 to-transparent',
         )}
       >
         <div
@@ -72,17 +72,24 @@ export function SiteHeader() {
             scrolled ? 'h-16' : 'h-20 md:h-24',
           )}
         >
-          <Logo compact={scrolled} />
+          <Logo compact={scrolled} dark />
 
           <nav aria-label="Основная навигация" className="hidden lg:block">
             <ul className="flex items-center gap-1">
-              {nav.map((item) => (
+              {nav.map((item, i) => (
                 <li key={item.label}>
                   <a
                     href={item.href}
-                    className="rounded-md px-3 py-2 text-[15px] font-medium text-ink/80 transition hover:bg-ink/5 hover:text-ink"
+                    className="group relative rounded-md px-3 py-2 text-[15px] font-medium text-paper/75 transition hover:text-paper"
                   >
+                    <span className="mr-1.5 font-mono text-[10px] tabular-nums text-course/90">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
                     {item.label}
+                    <span
+                      aria-hidden="true"
+                      className="absolute inset-x-3 -bottom-0.5 h-px origin-left scale-x-0 bg-course transition-transform duration-300 group-hover:scale-x-100"
+                    />
                   </a>
                 </li>
               ))}
@@ -93,7 +100,7 @@ export function SiteHeader() {
             <button
               type="button"
               onClick={() => searchRef.current?.showModal()}
-              className="flex size-10 items-center justify-center rounded-md text-ink/80 transition hover:bg-ink/5 hover:text-ink"
+              className="flex size-10 items-center justify-center rounded-md text-paper/80 transition hover:bg-paper/10 hover:text-paper"
             >
               <Search className="size-5" />
               <span className="sr-only">Поиск по сайту</span>
@@ -101,7 +108,7 @@ export function SiteHeader() {
             <button
               type="button"
               onClick={() => signInRef.current?.showModal()}
-              className="hidden h-10 items-center gap-2 rounded-md border border-ink/15 bg-card/60 px-4 text-sm font-semibold text-ink transition hover:border-ink/30 hover:bg-card sm:flex"
+              className="hidden h-10 items-center gap-2 rounded-md bg-course px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-course/85 sm:flex"
             >
               <UserRound className="size-4" />
               Войти
@@ -109,7 +116,7 @@ export function SiteHeader() {
             <button
               type="button"
               onClick={() => menuRef.current?.showModal()}
-              className="flex size-10 items-center justify-center rounded-md text-ink transition hover:bg-ink/5 lg:hidden"
+              className="flex size-10 items-center justify-center rounded-md text-paper transition hover:bg-paper/10 lg:hidden"
             >
               <Menu className="size-5" />
               <span className="sr-only">Открыть меню</span>
@@ -179,13 +186,16 @@ export function SiteHeader() {
       <Overlay dialogRef={menuRef} title="Меню">
         <nav aria-label="Мобильная навигация">
           <ul className="flex flex-col">
-            {nav.map((item) => (
+            {nav.map((item, i) => (
               <li key={item.label}>
                 <a
                   href={item.href}
                   onClick={() => menuRef.current?.close()}
-                  className="block border-b border-border py-3 font-heading text-xl font-semibold"
+                  className="flex items-baseline gap-3 border-b border-border py-3 font-heading text-xl font-semibold"
                 >
+                  <span className="font-mono text-xs tabular-nums text-course">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
                   {item.label}
                 </a>
               </li>
