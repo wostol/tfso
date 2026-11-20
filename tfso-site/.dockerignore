@@ -1,0 +1,37 @@
+# Локальная разработка
+.env
+.env.local
+.env*.local
+
+# Зависимости
+node_modules
+.pnp
+.pnp.js
+
+# Сборка Next.js
+.next
+out
+build
+dist
+
+# Логи
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Редакторы
+.vscode
+.idea
+.DS_Store
+
+# Vercel
+.vercel
+
+# v0 sandbox
+__v0_runtime_loader.js
+__v0_devtools.tsx
+__v0_jsx-dev-runtime.tsx
+.snowflake/
+.design-cache/
+.v0-trash/

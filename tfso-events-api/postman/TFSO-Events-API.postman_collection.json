@@ -1,0 +1,231 @@
+{
+  "info": {
+    "_postman_id": "a7f3c2e1-5b8d-4c6a-9e2f-tfso00000001",
+    "name": "TFSO Events API",
+    "description": "Коллекция запросов к учебному REST-микросервису «Мероприятия и результаты» (ТФСО).\n\nПорядок проверки:\n1. Запустите сервис: docker compose up --build\n2. Сначала выполните «Events / 02 Создать мероприятие» — скрипт автоматически сохранит id в переменную коллекции.\n3. Затем выполняйте остальные запросы сверху вниз, включая папку «Негативные сценарии» (проверка кодов 400/404/409).\n\nSwagger: http://localhost:3000/docs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "eventId", "value": "" },
+    { "key": "missingId", "value": "00000000-0000-4000-8000-000000000000" }
+  ],
+  "item": [
+    {
+      "name": "System",
+      "item": [
+        {
+          "name": "01 Проверка живости",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/health", "host": ["{{baseUrl}}"], "path": ["health"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Events",
+      "item": [
+        {
+          "name": "01 Список мероприятий",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/events?status=&search=&limit=20&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "events"],
+              "query": [
+                { "key": "status", "value": "", "description": "Фильтр: upcoming | ongoing | finished | cancelled", "disabled": true },
+                { "key": "search", "value": "Томск", "description": "Поиск по названию и месту проведения", "disabled": true },
+                { "key": "limit", "value": "20" },
+                { "key": "offset", "value": "0" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "02 Создать мероприятие",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Код 201', () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set('eventId', pm.response.json().id);",
+                  "console.log('eventId сохранён в переменную коллекции:', pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Открытие сезона 2026\",\n  \"eventDate\": \"2026-05-16\",\n  \"location\": \"Томск, сосновый бор\",\n  \"discipline\": \"Заданное направление\",\n  \"description\": \"Первые старты весеннего календаря\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/api/events", "host": ["{{baseUrl}}"], "path": ["api", "events"] }
+          }
+        },
+        {
+          "name": "03 Получить мероприятие по id",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/events/{{eventId}}", "host": ["{{baseUrl}}"], "path": ["api", "events", "{{eventId}}"] }
+          }
+        },
+        {
+          "name": "04 Обновить мероприятие (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"ongoing\",\n  \"description\": \"Старты идут прямо сейчас\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/api/events/{{eventId}}", "host": ["{{baseUrl}}"], "path": ["api", "events", "{{eventId}}"] }
+          }
+        },
+        {
+          "name": "05 Удалить мероприятие",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/events/{{eventId}}", "host": ["{{baseUrl}}"], "path": ["api", "events", "{{eventId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Results",
+      "item": [
+        {
+          "name": "01 Добавить результат (финишировал)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"athleteName\": \"Иванов Иван\",\n  \"team\": \"ТФСО\",\n  \"birthYear\": 1995,\n  \"timeSeconds\": 1830,\n  \"status\": \"OK\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/api/events/{{eventId}}/results", "host": ["{{baseUrl}}"], "path": ["api", "events", "{{eventId}}", "results"] }
+          }
+        },
+        {
+          "name": "02 Добавить результат (второй участник)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"athleteName\": \"Петров Пётр\",\n  \"team\": \"СибАО\",\n  \"timeSeconds\": 1755,\n  \"status\": \"OK\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/api/events/{{eventId}}/results", "host": ["{{baseUrl}}"], "path": ["api", "events", "{{eventId}}", "results"] }
+          }
+        },
+        {
+          "name": "03 Добавить результат (сошёл с дистанции)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"athleteName\": \"Сидоров Сидор\",\n  \"team\": \"ТГУ\",\n  \"status\": \"DNF\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/api/events/{{eventId}}/results", "host": ["{{baseUrl}}"], "path": ["api", "events", "{{eventId}}", "results"] }
+          }
+        },
+        {
+          "name": "04 Протокол с распределением мест",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/events/{{eventId}}/results", "host": ["{{baseUrl}}"], "path": ["api", "events", "{{eventId}}", "results"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Негативные сценарии",
+      "item": [
+        {
+          "name": "N1 Некорректное тело → 400",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"А\",\n  \"eventDate\": \"16.05.2026\",\n  \"location\": \"Т\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/api/events", "host": ["{{baseUrl}}"], "path": ["api", "events"] }
+          }
+        },
+        {
+          "name": "N2 Мероприятие не существует → 404",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/events/{{missingId}}", "host": ["{{baseUrl}}"], "path": ["api", "events", "{{missingId}}"] }
+          }
+        },
+        {
+          "name": "N3 Некорректный UUID → 400",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/events/abc", "host": ["{{baseUrl}}"], "path": ["api", "events", "abc"] }
+          }
+        },
+        {
+          "name": "N4 Дубликат результата → 409 (выполнить дважды)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"athleteName\": \"Иванов Иван\",\n  \"timeSeconds\": 2000,\n  \"status\": \"OK\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/api/events/{{eventId}}/results", "host": ["{{baseUrl}}"], "path": ["api", "events", "{{eventId}}", "results"] }
+          }
+        },
+        {
+          "name": "N5 Результат без обязательного времени → 400",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"athleteName\": \"Кузнецов Ким\",\n  \"status\": \"OK\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/api/events/{{eventId}}/results", "host": ["{{baseUrl}}"], "path": ["api", "events", "{{eventId}}", "results"] }
+          }
+        },
+        {
+          "name": "N6 Неизвестный маршрут → 404",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/unknown", "host": ["{{baseUrl}}"], "path": ["api", "unknown"] }
+          }
+        },
+        {
+          "name": "N7 Некорректный JSON → 400",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{ это не json",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/api/events", "host": ["{{baseUrl}}"], "path": ["api", "events"] }
+          }
+        }
+      ]
+    }
+  ]
+}

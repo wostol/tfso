@@ -1,0 +1,224 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-heading-face);
+  --font-mono: var(--font-mono-face);
+
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-forest: var(--forest);
+  --color-forest-deep: var(--forest-deep);
+  --color-forest-soft: var(--forest-soft);
+  --color-open: var(--open);
+  --color-course: var(--course);
+  --color-amber: var(--amber);
+  --color-contour: var(--contour);
+
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+}
+
+:root {
+  color-scheme: light;
+  --paper: #f5f0e3;
+  --ink: #1b2620;
+  --forest: #2e6b3f;
+  --forest-deep: #10241a;
+  --forest-soft: #cfe3c2;
+  --open: #f0c458;
+  --course: #a8247c;
+  --amber: #d4861a;
+  --contour: #a9662e;
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: #fbf8f0;
+  --card-foreground: var(--ink);
+  --popover: #fbf8f0;
+  --popover-foreground: var(--ink);
+  --primary: var(--course);
+  --primary-foreground: #ffffff;
+  --secondary: #ebe4d2;
+  --secondary-foreground: var(--ink);
+  --muted: #ebe4d2;
+  --muted-foreground: #56625a;
+  --accent: var(--forest-soft);
+  --accent-foreground: var(--forest-deep);
+  --destructive: #b3261e;
+  --border: #ddd3bd;
+  --input: #d4c9b0;
+  --ring: var(--course);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-heading;
+    text-wrap: balance;
+  }
+}
+
+@utility contour-texture {
+  background-image: url('/textures/contours.svg');
+  background-size: 640px 640px;
+}
+
+@utility contour-texture-light {
+  background-image: url('/textures/contours-light.svg');
+  background-size: 640px 640px;
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.course-line {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: course-draw 14s linear infinite;
+}
+
+@keyframes course-draw {
+  0% {
+    stroke-dashoffset: 100;
+    opacity: 1;
+  }
+  70% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  92% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+.control-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: control-pulse 14s ease-out infinite;
+}
+
+@keyframes control-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  6% {
+    transform: scale(2.1);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.1);
+    opacity: 0;
+  }
+}
+
+.compass-needle {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: needle-drift 18s linear infinite;
+  transition: transform 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+.group:hover .compass-needle,
+.group:focus-visible .compass-needle {
+  animation: none;
+  transform: rotate(0deg);
+}
+
+@keyframes needle-drift {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s ease;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+dialog::backdrop {
+  background: rgb(16 36 26 / 0.55);
+  backdrop-filter: blur(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .course-line {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  .control-pulse {
+    display: none;
+  }
+  .compass-needle {
+    animation: none;
+    transition: none;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

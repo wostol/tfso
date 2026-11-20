@@ -1,0 +1,25 @@
+# Environment variables — .env.example коммитим, .env — нет
+.env
+.env.local
+.env*.local
+
+# Зависимости
+node_modules/
+
+# Сборка Next.js
+.next/
+out/
+dist/
+
+# Логи и служебное
+*.log
+.DS_Store
+.vercel/
+
+# v0 sandbox internal files
+__v0_runtime_loader.js
+__v0_devtools.tsx
+__v0_jsx-dev-runtime.ts
+.snowflake/
+.design-cache/
+.v0-trash/

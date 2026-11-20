@@ -1,0 +1,20 @@
+# Корневой .gitignore для tfso-mvp
+# Подпроекты имеют собственные .gitignore, здесь — общие правила.
+
+# Зависимости и сборка
+**/node_modules/
+**/.next/
+**/dist/
+**/out/
+
+# Переменные окружения (.env.example коммитим, .env — нет)
+.env
+.env.local
+.env*.local
+!**/.env.example
+
+# Логи
+*.log
+
+# Системное
+.DS_Store
