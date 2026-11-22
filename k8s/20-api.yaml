@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: tfso
+  labels:
+    app: tfso-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tfso-api
+  template:
+    metadata:
+      labels:
+        app: tfso-api
+    spec:
+      initContainers:
+        - name: wait-for-db
+          image: postgres:16-alpine
+          command: ["sh", "-c", "until pg_isready -h postgres -p 5432 -U tfso; do sleep 2; done"]
+      containers:
+        - name: api
+          image: tfso-events-api:1.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: "3000"
+            - name: LOG_LEVEL
+              value: info
+          envFrom:
+            - secretRef:
+                name: tfso-api
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            failureThreshold: 30
+            periodSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+  namespace: tfso
+  labels:
+    app: tfso-api
+spec:
+  selector:
+    app: tfso-api
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000

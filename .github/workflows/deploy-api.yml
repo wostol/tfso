@@ -1,0 +1,27 @@
+name: ci-cd-tfso-api
+on:
+  push:
+    branches: [Dev] # ваша лабораторная ветка
+    paths: ["tfso-events-api/**", "k8s/**"]
+  workflow_dispatch: # кнопка Run workflow вручную — удобно для скриншотов
+
+jobs:
+  build-and-deploy:
+    runs-on: [self-hosted] # наш раннер на VM
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t tfso-events-api:${{ github.sha }} ./tfso-events-api
+
+      - name: Load image into minikube
+        run: minikube image load tfso-events-api:${{ github.sha }}
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl -n tfso set image deployment/api api=tfso-events-api:${{ github.sha }}
+          kubectl -n tfso rollout status deployment/api --timeout=180s
+
+      - name: Verify pods
+        run: kubectl -n tfso get pods -l app=tfso-api

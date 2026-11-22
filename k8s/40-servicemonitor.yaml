@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: tfso-api
+  namespace: tfso
+  labels: { release: monitoring }   # ОБЯЗАТЕЛЬНО — по ней Operator находит SM
+spec:
+  selector:
+    matchLabels: { app: tfso-api }  # совпадает с labels у Service api
+  namespaceSelector:
+    matchNames: [tfso]
+  endpoints:
+    - port: http                    # имя порта в Service api
+      path: /metrics
+      interval: 15s

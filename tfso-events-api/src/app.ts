@@ -5,6 +5,7 @@ import { eventsRoutes } from "./modules/events/events.routes";
 import { resultsRoutes } from "./modules/results/results.routes";
 import { registerErrorHandler } from "./plugins/error-handler";
 import { registerSwagger } from "./plugins/swagger";
+import client from "prom-client";
 
 export async function buildApp(
   db: Db,
@@ -31,6 +32,12 @@ export async function buildApp(
     { schema: { tags: ["System"], summary: "Проверка работоспособности" } },
     async () => ({ status: "ok", timestamp: new Date().toISOString() }),
   );
+  const registry = new client.Registry();
+  client.collectDefaultMetrics({ register: registry });
 
+  app.get("/metrics", async (_req, reply) => {
+    reply.header("Content-Type", registry.contentType);
+    return registry.metrics();
+  });
   return app;
 }
